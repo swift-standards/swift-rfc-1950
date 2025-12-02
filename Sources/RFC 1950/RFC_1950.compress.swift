@@ -1,0 +1,78 @@
+// RFC_1950.compress.swift
+
+public import RFC_1951
+
+extension RFC_1950 {
+    /// Compress data using ZLIB format (DEFLATE with wrapper)
+    ///
+    /// - Parameters:
+    ///   - input: The data to compress
+    ///   - output: Buffer to append compressed data to
+    ///   - level: Compression level (default: `.balanced`)
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// var compressed: [UInt8] = []
+    /// RFC_1950.compress(data, into: &compressed)
+    /// ```
+    public static func compress<Input, Output>(
+        _ input: Input,
+        into output: inout Output,
+        level: RFC_1951.Level = .balanced
+    ) where Input: Collection, Input.Element == UInt8,
+            Output: RangeReplaceableCollection, Output.Element == UInt8 {
+        let inputArray = Array(input)
+
+        // ZLIB header (2 bytes)
+        // CMF byte: CM (4 bits) + CINFO (4 bits)
+        // CM = 8 (DEFLATE)
+        // CINFO = 7 (32K window size, log2(32768) - 8 = 7)
+        let cmf: UInt8 = 0x78  // 8 | (7 << 4) = 0x78
+
+        // FLG byte: FCHECK (5 bits) + FDICT (1 bit) + FLEVEL (2 bits)
+        // FDICT = 0 (no preset dictionary)
+        // FLEVEL encodes compression level:
+        //   0 = fastest, 1 = fast, 2 = default, 3 = maximum
+        let flevel: UInt8
+        switch level {
+        case .none: flevel = 0
+        case .fast: flevel = 1
+        case .balanced: flevel = 2
+        case .best: flevel = 3
+        }
+
+        // FCHECK is set so that (CMF * 256 + FLG) is a multiple of 31
+        let flgWithoutCheck = flevel << 6
+        let fcheck = (31 - Int((UInt16(cmf) << 8 | UInt16(flgWithoutCheck)) % 31)) % 31
+        let flg = flgWithoutCheck | UInt8(fcheck)
+
+        output.append(cmf)
+        output.append(flg)
+
+        // DEFLATE compressed data
+        RFC_1951.compress(inputArray, into: &output, level: level)
+
+        // Adler-32 checksum of uncompressed data (big-endian)
+        let checksum = Adler32.checksum(inputArray)
+        output.append(UInt8((checksum >> 24) & 0xFF))
+        output.append(UInt8((checksum >> 16) & 0xFF))
+        output.append(UInt8((checksum >> 8) & 0xFF))
+        output.append(UInt8(checksum & 0xFF))
+    }
+
+    /// Convenience: compress and return new array
+    ///
+    /// - Parameters:
+    ///   - input: The data to compress
+    ///   - level: Compression level (default: `.balanced`)
+    /// - Returns: Compressed data in ZLIB format
+    public static func compress<Bytes>(
+        _ input: Bytes,
+        level: RFC_1951.Level = .balanced
+    ) -> [UInt8] where Bytes: Collection, Bytes.Element == UInt8 {
+        var output: [UInt8] = []
+        compress(input, into: &output, level: level)
+        return output
+    }
+}
