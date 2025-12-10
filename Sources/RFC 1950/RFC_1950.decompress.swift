@@ -19,13 +19,7 @@ extension RFC_1950 {
     public static func decompress<Input, Output>(
         _ input: Input,
         into output: inout Output
-    ) throws(Error)
-    where
-        Input: Collection,
-        Input.Element == UInt8,
-        Output: RangeReplaceableCollection,
-        Output.Element == UInt8
-    {
+    ) throws(Error) where Input: Collection, Input.Element == UInt8, Output: RangeReplaceableCollection, Output.Element == UInt8 {
         guard !input.isEmpty else {
             throw .empty
         }

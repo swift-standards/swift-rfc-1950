@@ -20,13 +20,7 @@ extension RFC_1950 {
         _ input: Input,
         into output: inout Output,
         level: RFC_1951.Level = .balanced
-    )
-    where
-        Input: Collection,
-        Input.Element == UInt8,
-        Output: RangeReplaceableCollection,
-        Output.Element == UInt8
-    {
+    ) where Input: Collection, Input.Element == UInt8, Output: RangeReplaceableCollection, Output.Element == UInt8 {
         let inputArray = Array(input)
 
         // ZLIB header (2 bytes)
