@@ -45,7 +45,8 @@ extension RFC_1950.Error: CustomStringConvertible {
         case .presetDictionaryRequired:
             return "ZLIB stream requires preset dictionary (not supported)"
         case .checksumMismatch(let expected, let actual):
-            return "Adler-32 checksum mismatch: expected 0x\(String(expected, radix: 16)), got 0x\(String(actual, radix: 16))"
+            return
+                "Adler-32 checksum mismatch: expected 0x\(String(expected, radix: 16)), got 0x\(String(actual, radix: 16))"
         case .deflateError(let error):
             return "DEFLATE error: \(error)"
         }

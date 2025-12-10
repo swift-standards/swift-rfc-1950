@@ -6,17 +6,18 @@ import PackageDescription
 let package = Package(
     name: "swift-rfc-1950",
     platforms: [
-        .macOS(.v15),
-        .iOS(.v18),
-        .tvOS(.v18),
-        .watchOS(.v11),
+        .macOS(.v26),
+        .iOS(.v26),
+        .tvOS(.v26),
+        .watchOS(.v26),
+        .visionOS(.v26),
     ],
     products: [
         .library(name: "RFC 1950", targets: ["RFC 1950"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.8.0"),
-        .package(path: "../swift-rfc-1951"),
+        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.1.0"),
+        .package(url: "https://github.com/swift-standards/swift-rfc-1951", from: "0.1.0"),
     ],
     targets: [
         .target(

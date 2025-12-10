@@ -1,6 +1,7 @@
 // RFC_1950_Tests.swift
 
 import Testing
+
 @testable import RFC_1950
 
 @Suite("RFC 1950 - ZLIB Compression")
@@ -81,7 +82,7 @@ struct RFC1950Tests {
         // "Wikipedia" example from Wikipedia article on Adler-32
         let input = Array("Wikipedia".utf8)
         let checksum = RFC_1950.Adler32.checksum(input)
-        #expect(checksum == 0x11E60398)
+        #expect(checksum == 0x11E6_0398)
     }
 
     @Test("Adler-32 incremental matches one-shot")
@@ -102,12 +103,15 @@ struct RFC1950Tests {
 
     // MARK: - Compression Level Tests
 
-    @Test("All compression levels produce valid output", arguments: [
-        RFC_1951.Level.none,
-        RFC_1951.Level.fast,
-        RFC_1951.Level.balanced,
-        RFC_1951.Level.best,
-    ])
+    @Test(
+        "All compression levels produce valid output",
+        arguments: [
+            RFC_1951.Level.none,
+            RFC_1951.Level.fast,
+            RFC_1951.Level.balanced,
+            RFC_1951.Level.best,
+        ]
+    )
     func compressionLevels(level: RFC_1951.Level) throws {
         let input = Array("The quick brown fox jumps over the lazy dog.".utf8)
         let compressed = RFC_1950.compress(input, level: level)

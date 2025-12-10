@@ -1,6 +1,6 @@
 // RFC_1950.decompress.swift
 
-public import RFC_1951
+import RFC_1951
 
 extension RFC_1950 {
     /// Decompress ZLIB-formatted data
@@ -19,8 +19,13 @@ extension RFC_1950 {
     public static func decompress<Input, Output>(
         _ input: Input,
         into output: inout Output
-    ) throws(Error) where Input: Collection, Input.Element == UInt8,
-                          Output: RangeReplaceableCollection, Output.Element == UInt8 {
+    ) throws(Error)
+    where
+        Input: Collection,
+        Input.Element == UInt8,
+        Output: RangeReplaceableCollection,
+        Output.Element == UInt8
+    {
         guard !input.isEmpty else {
             throw .empty
         }
@@ -38,7 +43,7 @@ extension RFC_1950 {
         let cmf = inputArray[offset]
         offset += 1
 
-        let cm = cmf & 0x0F          // Compression method
+        let cm = cmf & 0x0F  // Compression method
         let cinfo = (cmf >> 4) & 0x0F  // Window size (for DEFLATE)
 
         guard cm == 8 else {
@@ -79,10 +84,8 @@ extension RFC_1950 {
         // Verify Adler-32 checksum
         let checksumOffset = inputArray.count - 4
         let expectedChecksum =
-            UInt32(inputArray[checksumOffset]) << 24 |
-            UInt32(inputArray[checksumOffset + 1]) << 16 |
-            UInt32(inputArray[checksumOffset + 2]) << 8 |
-            UInt32(inputArray[checksumOffset + 3])
+            UInt32(inputArray[checksumOffset]) << 24 | UInt32(inputArray[checksumOffset + 1]) << 16
+            | UInt32(inputArray[checksumOffset + 2]) << 8 | UInt32(inputArray[checksumOffset + 3])
 
         let actualChecksum = Adler32.checksum(output)
 

@@ -1,6 +1,6 @@
 // RFC_1950.unwrap.swift
 
-public import RFC_1951
+import RFC_1951
 
 extension RFC_1950 {
     /// Unwrap ZLIB data to get raw DEFLATE stream
