@@ -16,14 +16,14 @@ let package = Package(
         .library(name: "RFC 1950", targets: ["RFC 1950"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.1.0"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-1951", from: "0.1.0"),
+        .package(path: "../../swift-primitives/swift-standard-library-extensions"),
+        .package(path: "../swift-rfc-1951"),
     ],
     targets: [
         .target(
             name: "RFC 1950",
             dependencies: [
-                .product(name: "Standards", package: "swift-standards"),
+                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
                 .product(name: "RFC 1951", package: "swift-rfc-1951"),
             ]
         ),
